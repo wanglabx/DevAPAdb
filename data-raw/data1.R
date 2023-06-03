@@ -1,3 +1,4 @@
 ## code to prepare `data1` dataset goes here
 
-usethis::use_data(data1, overwrite = TRUE)
+pdui <- readRDS("workflow/data/01-import/PDUI.rds")
+usethis::use_data(pdui, overwrite = TRUE)

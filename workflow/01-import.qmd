@@ -1,22 +1,38 @@
 ---
-title: "01-import"
+title: "Data Preprocessing"
 title-block-banner: true
 author:
-  - name: xxx
-    orcid: xxx
+  - name: Jinlong Ru
+    orcid: 0000-0002-6757-6018
+    corresponding: true
+date: 2023-06-03
 toc: true
-format: gfm
+toc-depth: 4
+number-sections: true
+code-fold: true
+code-line-numbers: true
+code-tools: true
+format: 
+  html:
+    embed-resources: true
+    smooth-scroll: true
+    page-layout: article
+    theme: 
+      light: flatly
+      dark: darkly
+reference-location: margin
+citation-location: margin
 bibliography: refs.bib
+cls: bioinformatics.csl
 params:
   name: "01-import"
 ---
 
-Updated: `r format(Sys.time(), '%Y-%m-%d %H:%M:%S', tz = 'CET')` CET.
-
+**Updated: `r format(Sys.time(), '%Y-%m-%d %H:%M:%S', tz = 'CET')` CET.**
 
 ```{r setup}
-#| message: false
 #| include: false
+#| message: false
 here::i_am(paste0(params$name, ".qmd"), uuid = "4678e068-b289-4662-8909-aa64e8baa033")
 projthis::proj_create_dir_target(params$name, clean = FALSE)
 path_target <- projthis::proj_path_target(params$name)
@@ -28,17 +44,58 @@ dir.create(path_data, recursive = T)
 The purpose of this document is ...
 
 ```{r packages}
+#| message: false
 library(here)
+library(conflicted)
+library(tidyverse)
+library(data.table)
 ```
 
 ## Tasks
 
 The first task is ...
 
-## Files written
+```{r}
+#| eval: false
+dpath <- here(path_data, "230603-PDUI")
+# list.files(dpath)
 
-These files have been written to the target directory, ```r paste0("data/", params$name)```:
+read_PDUI <- function(fin, species_name) {
+    df <- fread(fin) %>%
+        # convert wide to long format using `pivot_longer()` function, starting from column 5 to the end. Column name as new column "sample_id"
+        pivot_longer(cols = 5:last_col(), names_to = "sample_id", values_to = "PDUI") %>%
+        # the sample_id column looks like "female_forebrain_embryonic day 13.5", we want to extract the sample type and time point information, and create four new columns named "gender", "organism", "develop_type", and "time_point". "gender", "organism", and "develop_type" can be obtained by separating by "_", and "time_point" can be obtained by separating by "day".
+        separate(sample_id, c("gender", "organism", "develop_type", "time_point"), sep = "_| day", remove = FALSE) %>%
+        mutate(species = species_name)
 
-```{r list-files-target}
-projthis::proj_dir_info(path_target())
+    return(df)
+}
+
+fins <- list.files(dpath, full.names = TRUE)
+fins <- fins[c(4, 5)]
+
+dfs <- list()
+for (fin in fins) {
+    species_name <- basename(fin) %>% str_remove("_PDUI.txt")
+    dfs[[species_name]] <- read_PDUI(fin, species_name)
+}
+
+df <- bind_rows(dfs)
+# write to RDS file
+saveRDS(df, path_target("PDUI.rds"))
+```
+
+```{r}
+df <- readRDS(path_target("PDUI.rds"))
+```
+
+
+  
+  
+ ##  Files written
+  
+Th  ese files have been written to the target directory, ```r paste0("data/", params$name)```:
+  
+  ```{r list-files-target}
+  projthis::proj_dir_info(path_target())
 ```
