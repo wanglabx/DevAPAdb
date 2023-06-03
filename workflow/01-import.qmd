@@ -86,16 +86,18 @@ saveRDS(df, path_target("PDUI.rds"))
 ```
 
 ```{r}
-df <- readRDS(path_target("PDUI.rds"))
+# df <- readRDS(path_target("PDUI.rds"))
+devtools::load_all()
+head(pdui)
 ```
 
 
   
   
- ##  Files written
+##  Files written
   
-Th  ese files have been written to the target directory, ```r paste0("data/", params$name)```:
+These files have been written to the target directory, ```r paste0("data/", params$name)```:
   
-  ```{r list-files-target}
-  projthis::proj_dir_info(path_target())
+```{r list-files-target}
+projthis::proj_dir_info(path_target())
 ```
