@@ -1,24 +1,12 @@
----
-output: github_document
----
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
-)
-```
 
 # DevAPAdb
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of DevAPAdb is to ...
+The goal of DevAPAdb is to …
 
 ## Installation
 
@@ -30,4 +18,4 @@ remotes::install_github("rujinlong/DevAPAdb")
 
 ## Example
 
-TBD...
+TBD…
