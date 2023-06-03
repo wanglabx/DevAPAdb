@@ -1,0 +1,44 @@
+---
+title: "01-import"
+title-block-banner: true
+author:
+  - name: xxx
+    orcid: xxx
+toc: true
+format: gfm
+bibliography: refs.bib
+params:
+  name: "01-import"
+---
+
+Updated: `r format(Sys.time(), '%Y-%m-%d %H:%M:%S', tz = 'CET')` CET.
+
+
+```{r setup}
+#| message: false
+#| include: false
+here::i_am(paste0(params$name, ".qmd"), uuid = "4678e068-b289-4662-8909-aa64e8baa033")
+projthis::proj_create_dir_target(params$name, clean = FALSE)
+path_target <- projthis::proj_path_target(params$name)
+path_source <- projthis::proj_path_source(params$name)
+path_data <- path_source("00-raw", params$name)
+dir.create(path_data, recursive = T)
+```
+
+The purpose of this document is ...
+
+```{r packages}
+library(here)
+```
+
+## Tasks
+
+The first task is ...
+
+## Files written
+
+These files have been written to the target directory, ```r paste0("data/", params$name)```:
+
+```{r list-files-target}
+projthis::proj_dir_info(path_target())
+```
