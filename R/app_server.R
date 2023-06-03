@@ -1,3 +1,5 @@
+library(DBI)
+library(RSQLite)
 #' The application server-side
 #'
 #' @param input,output,session Internal parameters for {shiny}.
@@ -5,5 +7,5 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
-  # Your application server logic
+  mod_module1_server("module1_1")
 }

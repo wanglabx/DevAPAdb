@@ -9,9 +9,12 @@ app_ui <- function(request) {
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # Your application UI logic
-    fluidPage(
-      h1("DevAPAdb")
-    )
+    navbarPage("DevAPAdb",
+               # tabPanel("Database", mod_vhydeg_ui("vhydeg_1")),
+               tabPanel("Database", mod_module1_ui("module1_1"))
+               # tabPanel("Tutorial", mod_tutorial_ui("tutorial_1")),
+               # theme = shinythemes::shinytheme("flatly")
+               )
   )
 }
 
