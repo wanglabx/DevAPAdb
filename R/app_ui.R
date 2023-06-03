@@ -15,6 +15,39 @@ app_ui <- function(request) {
   )
 }
 
+
+#' #' The application User-Interface
+#' #'
+#' #' @param request Internal parameter - do not change
+#' #'
+#' #' @importFrom shinydashboard dashboardPage dashboardHeader dashboardSidebar dashboardBody
+#' #' @importFrom shinydashboard sidebarMenu menuItem tabItems
+#' #' @importFrom shiny tags
+#' #'
+#' #' @noRd
+#' app_ui <- function(request){
+#'   shiny::tagList(
+#'     golem_add_external_resources(),
+#'     shinydashboard::dashboardPage(
+#'       shinydashboard::dashboardHeader(title = "My Golem App"),
+#'       shinydashboard::dashboardSidebar(
+#'         shinydashboard::sidebarMenu(
+#'           shinydashboard::menuItem("Tab 1", tabName = "tab1"),
+#'           shinydashboard::menuItem("Tab 2", tabName = "tab2")
+#'         )
+#'       ),
+#'       shinydashboard::dashboardBody(
+#'         shinydashboard::tabItems(
+#'           shinydashboard::tabItem("tab1", "Content for Tab 1"),
+#'           shinydashboard::tabItem("tab2", "Content for Tab 2")
+#'         )
+#'       )
+#'     )
+#'   )
+#' }
+
+
+
 #' Add external Resources to the Application
 #'
 #' This function is internally used to add external

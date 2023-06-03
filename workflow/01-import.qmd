@@ -49,6 +49,9 @@ library(here)
 library(conflicted)
 library(tidyverse)
 library(data.table)
+library(DBI)
+library(RSQLite)
+con <- dbConnect(RSQLite::SQLite(), dbname = path_target("PDUI.sqlite"))
 ```
 
 ## Tasks
@@ -86,9 +89,29 @@ saveRDS(df, path_target("PDUI.rds"))
 ```
 
 ```{r}
+#| eval: false
 # df <- readRDS(path_target("PDUI.rds"))
 devtools::load_all()
-head(pdui)
+dbWriteTable(con, "pdui", pdui)
+dbDisconnect(con)
+```
+
+
+```{r}
+# Send a query
+res <- dbSendQuery(con, "SELECT * FROM pdui WHERE species = 'rabbit' AND organism = 'heart' AND PDUI>0.999")
+
+# Fetch the results
+data <- dbFetch(res)
+
+# Clear the result
+dbClearResult(res)
+```
+
+
+```{r}
+# Disconnect from the database
+dbDisconnect(con)
 ```
 
 
