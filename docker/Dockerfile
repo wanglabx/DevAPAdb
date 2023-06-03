@@ -1,4 +1,4 @@
-FROM devapadb_base
+FROM jinlongru/devapadb_base
 COPY renv.lock.prod renv.lock
 RUN R -e 'renv::restore()'
 COPY DevAPAdb_*.tar.gz /app.tar.gz
