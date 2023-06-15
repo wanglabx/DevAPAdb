@@ -1,0 +1,42 @@
+---
+title: "dashboard-DevAPAdb"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: scroll
+    navbar:
+      - { title: "about DevAPADB", href: "https://wanglab2022.github.io/DevAPAdb", align: right }
+    source_code: embed
+    social: "menu"
+runtime: shiny
+params:
+  name: "dashboard-DevAPAdb" # change if you rename file
+---
+
+```{r here, message=FALSE, include=FALSE}
+library(here)
+library(conflicted)
+library(tidyverse)
+library(data.table)
+library(flexdashboard)
+
+here::i_am(paste0(params$name, ".Rmd"), uuid = "3000d198-9add-4264-b3a4-aa6f1074df15")
+
+projthis::proj_create_dir_target(params$name, clean = FALSE)
+path_target <- projthis::proj_path_target(params$name)
+path_source <- projthis::proj_path_source(params$name)
+path_data <- path_source("00-raw", params$name)
+# dir.create(path_data, recursive = T)
+devtools::load_all()
+```
+
+
+Page1
+=======================================================================
+
+Row {.sidebar}
+-----------------------------------------------------------------------
+```{r}
+sliderInput("sl1", "Please select value", min = 0, max = 100, value = 50, step = 5)
+selectInput("sl2", "Please select value", choices = c("A", "B", "C"))
+```

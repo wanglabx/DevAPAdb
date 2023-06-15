@@ -10,3 +10,5 @@ inst/doc
 workflow/data
 *_cache
 *.html
+
+/.luarc.json
