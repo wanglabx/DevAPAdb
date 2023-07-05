@@ -12,3 +12,4 @@ workflow/data
 *.html
 
 /.luarc.json
+analyses/data

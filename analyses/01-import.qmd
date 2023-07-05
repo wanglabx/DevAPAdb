@@ -1,0 +1,109 @@
+---
+title: "01-import"
+title-block-banner: true
+author:
+  - name: Jinlong Ru
+    orcid: 0000-0002-6757-6018
+    email: jinlong.ru@gmail.com
+date: 2023-07-05
+toc: true
+toc-depth: 4
+number-sections: true
+code-fold: true
+code-line-numbers: true
+code-tools: true
+format: 
+  html:
+    embed-resources: true
+    smooth-scroll: true
+    page-layout: article
+reference-location: margin
+citation-location: margin
+params:
+  name: "01-import"
+---
+
+**Updated: `r format(Sys.time(), '%Y-%m-%d %H:%M:%S', tz = 'CET')` CET.**
+
+```{r setup}
+#| message: false
+#| warning: false
+
+here::i_am(paste0(params$name, ".qmd"), uuid = "95ae4312-cc3c-494f-a9b5-57694fdddb2b")
+projthis::proj_create_dir_target(params$name, clean = FALSE)
+path_target <- projthis::proj_path_target(params$name)
+path_source <- projthis::proj_path_source(params$name)
+path_raw <- path_source("00-raw")
+dir.create(path_raw, recursive = T)
+path_data <- here::here(path_raw, params$name)
+dir.create(path_data, recursive = T)
+```
+
+```{r packages}
+#| message: false
+#| warning: false
+
+library(here)
+library(conflicted)
+library(tidyverse)
+library(openxlsx)
+library(data.table)
+
+
+import_nf <- function(fin_meta, species_name, nfpath) {
+  rst <- list()
+  
+  # Read metadata
+  df_meta <- openxlsx::read.xlsx(fin_meta, sheet = species_name) %>% 
+    dplyr::select(-fastq_ftp) %>% 
+    data.table::setnames(colnames(.), c("sample_id", "study_acc", "tax_id", "sci_name", "tissue", "sex", "dev_stage", "sample_title")) %>% 
+    dplyr::mutate(species = species_name)
+  
+  # Read salmon quant results
+  rst_salmon <- readRDS(here(nfpath, paste0(species_name, "_salmon.rds")))
+  
+  # Read dapars2 results
+  rst_pdui <- data.table::fread(here(nfpath, paste0(species_name, "_dapars2.tsv"))) %>% 
+    data.table::setnames(colnames(.), stringr::str_replace(colnames(.), "_T[12]_PDUI", ""))
+
+  return(list(
+      "metadata" = df_meta,
+      "salmon" = rst_salmon,
+      "pdui" = rst_pdui
+  ))
+}
+```
+
+## Tasks
+
+The first task is to import output of nextflow pipeline, and save them as `*.rds` file for downstream analyses. Only UCSC samples were used.
+
+```{r import pipeline results}
+species_ucsc <- c("african_clawed_frog", "chicken", "cow", "fly", "human", "macaque", "mouse", "pig", "rabbit", "tropical_clawed_frog", "zebrafish")
+fin_meta <- here(path_source("00-raw"), "metadata-ucsc.xlsx")
+
+# Use "cow" as example
+rst_cow <- import_nf(fin_meta, "cow", path_data)
+saveRDS(rst_cow, file = path_target("rst_cow.rds"), compress = "xz")
+
+# nfrst <- purrr::map(species_ucsc, import_nf, fin_meta = fin_meta, nfpath = path_data)
+```
+
+```{r import results example}
+rst_example <- readRDS(path_target("rst_cow.rds"))
+
+# The RDS file including:
+# 1. metadata: sample metadata
+# 2. salmon: salmon quant results
+# 3. pdui: dapars2 PDUI results
+str(rst_example)
+```
+
+
+## Files written
+
+These files have been written to the target directory, ```r paste0("data/", params$name)```:
+
+```{r list-files-target}
+projthis::proj_dir_info(path_target())
+```
