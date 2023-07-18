@@ -89,6 +89,11 @@ saveRDS(rst_cow, file = path_target("rst_cow.rds"), compress = "xz")
 # nfrst <- purrr::map(species_ucsc, import_nf, fin_meta = fin_meta, nfpath = path_data)
 ```
 
+```{r}
+rst_cow
+```
+
+
 ```{r import results example}
 rst_example <- readRDS(path_target("rst_cow.rds"))
 
