@@ -1,14 +1,6 @@
 .Rproj.user
-pyenv
 .Rhistory
-.Rdata
-.httr-oauth
-.DS_Store
-inst/doc
-/doc/
-/Meta/
-workflow/data
-*_cache
-
-/.luarc.json
+.RData
+.Ruserdata
+data_raw
 analyses/data

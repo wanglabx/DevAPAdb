@@ -1,5 +1,5 @@
 ---
-title: "dashboard-DevAPAdb"
+title: "90-dashboard"
 output: 
   flexdashboard::flex_dashboard:
     orientation: rows
@@ -10,8 +10,9 @@ output:
     social: "menu"
 runtime: shiny
 params:
-  name: "dashboard-DevAPAdb" # change if you rename file
+  name: "90-dashboard" # change if you rename file
 ---
+
 
 ```{r here, message=FALSE, include=FALSE}
 library(here)
@@ -20,7 +21,7 @@ library(tidyverse)
 library(data.table)
 library(flexdashboard)
 
-here::i_am(paste0(params$name, ".Rmd"), uuid = "3000d198-9add-4264-b3a4-aa6f1074df15")
+here::i_am(paste0(params$name, ".Rmd"), uuid = "931a1175-737e-4d6e-b70a-d6411711b880")
 
 projthis::proj_create_dir_target(params$name, clean = FALSE)
 path_target <- projthis::proj_path_target(params$name)

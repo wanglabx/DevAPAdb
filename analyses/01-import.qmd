@@ -5,7 +5,7 @@ author:
   - name: Jinlong Ru
     orcid: 0000-0002-6757-6018
     email: jinlong.ru@gmail.com
-date: 2023-07-05
+date: 2022-11-06
 toc: true
 toc-depth: 4
 number-sections: true
@@ -25,11 +25,12 @@ params:
 
 **Updated: `r format(Sys.time(), '%Y-%m-%d %H:%M:%S', tz = 'CET')` CET.**
 
+The purpose of this document is ...
+
 ```{r setup}
 #| message: false
-#| warning: false
-
-here::i_am(paste0(params$name, ".qmd"), uuid = "95ae4312-cc3c-494f-a9b5-57694fdddb2b")
+#| include: false
+here::i_am(paste0(params$name, ".qmd"), uuid = "68d84c08-062a-4f62-90d7-09076c16fd58")
 projthis::proj_create_dir_target(params$name, clean = FALSE)
 path_target <- projthis::proj_path_target(params$name)
 path_source <- projthis::proj_path_source(params$name)
@@ -40,14 +41,12 @@ dir.create(path_data, recursive = T)
 ```
 
 ```{r packages}
-#| message: false
-#| warning: false
-
 library(here)
 library(conflicted)
 library(tidyverse)
 library(openxlsx)
 library(data.table)
+devtools::load_all()
 
 
 import_nf <- function(fin_meta, species_name, nfpath) {
@@ -103,6 +102,7 @@ rst_example <- readRDS(path_target("rst_cow.rds"))
 # 3. pdui: dapars2 PDUI results
 str(rst_example)
 ```
+
 
 
 ## Files written
