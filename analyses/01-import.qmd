@@ -41,13 +41,14 @@ dir.create(path_data, recursive = T)
 ```
 
 ```{r packages}
+#| message: false
+#| warning: false
 library(here)
 library(conflicted)
 library(tidyverse)
 library(openxlsx)
 library(data.table)
-devtools::load_all()
-
+# devtools::load_all()
 
 import_nf <- function(fin_meta, species_name, nfpath) {
   rst <- list()
@@ -78,18 +79,11 @@ import_nf <- function(fin_meta, species_name, nfpath) {
 The first task is to import output of nextflow pipeline, and save them as `*.rds` file for downstream analyses. Only UCSC samples were used.
 
 ```{r import pipeline results}
-species_ucsc <- c("african_clawed_frog", "chicken", "cow", "fly", "human", "macaque", "mouse", "pig", "rabbit", "tropical_clawed_frog", "zebrafish")
 fin_meta <- here(path_source("00-raw"), "metadata-ucsc.xlsx")
+species_ucsc <- c("african_clawed_frog", "chicken", "cow", "fly", "human", "macaque", "mouse", "nematode", "pig", "rabbit", "rat", "tropical_clawed_frog", "zebrafish")
 
-# Use "cow" as example
-rst_cow <- import_nf(fin_meta, "cow", path_data)
-saveRDS(rst_cow, file = path_target("rst_cow.rds"), compress = "xz")
-
-# nfrst <- purrr::map(species_ucsc, import_nf, fin_meta = fin_meta, nfpath = path_data)
-```
-
-```{r}
-rst_cow
+nfrst <- purrr::map(species_ucsc, import_nf, fin_meta = fin_meta, nfpath = here(path_data, "nfrst"))
+purrr::map2(species_ucsc, nfrst, ~ saveRDS(.y, file = path_target(paste0("rst_", .x, ".rds")), compress = "gzip"))
 ```
 
 
