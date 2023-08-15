@@ -33,26 +33,26 @@ mod_module1_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     # Connect to the SQLite database
-    con <- dbConnect(RSQLite::SQLite(), dbname = "workflow/data/01-import/PDUI.sqlite")
-
-    # This is a reactive expression, so it will re-run whenever any reactive inputs it references change
-    data <- eventReactive(input$submit, {
-      query <- paste0("SELECT * FROM pdui WHERE species = '", input$species, "' AND organism = '", input$organism, "'")
-      res <- dbSendQuery(con, query)
-      df <- dbFetch(res)
-      dbClearResult(res)
-      df
-    })
-
-    # Use the data in a render function to display it in the UI
-    output$my_table <- renderTable({
-      head(data())
-    })
-
-    # Disconnect from the database when the session ends
-    session$onSessionEnded(function() {
-      dbDisconnect(con)
-    })
+    # con <- dbConnect(RSQLite::SQLite(), dbname = "workflow/data/01-import/olddel/PDUI.sqlite")
+    #
+    # # This is a reactive expression, so it will re-run whenever any reactive inputs it references change
+    # data <- eventReactive(input$submit, {
+    #   query <- paste0("SELECT * FROM pdui WHERE species = '", input$species, "' AND organism = '", input$organism, "'")
+    #   res <- dbSendQuery(con, query)
+    #   df <- dbFetch(res)
+    #   dbClearResult(res)
+    #   df
+    # })
+    #
+    # # Use the data in a render function to display it in the UI
+    # output$my_table <- renderTable({
+    #   head(data())
+    # })
+    #
+    # # Disconnect from the database when the session ends
+    # session$onSessionEnded(function() {
+    #   dbDisconnect(con)
+    # })
   })
 }
 

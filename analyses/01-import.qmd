@@ -48,8 +48,11 @@ library(conflicted)
 library(tidyverse)
 library(openxlsx)
 library(data.table)
-# devtools::load_all()
+devtools::load_all()
+```
 
+
+```{r import}
 import_nf <- function(fin_meta, species_name, nfpath) {
   rst <- list()
   

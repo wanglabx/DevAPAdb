@@ -10,10 +10,13 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic
     navbarPage("DevAPAdb",
+               tabPanel("Home"),
                # tabPanel("Database", mod_vhydeg_ui("vhydeg_1")),
-               tabPanel("Database", mod_module1_ui("module1_1"))
+               tabPanel("Browse", mod_module1_ui("module1_1")),
+               tabPanel("Download"),
+               tabPanel("Tutorial"),
                # tabPanel("Tutorial", mod_tutorial_ui("tutorial_1")),
-               # theme = shinythemes::shinytheme("flatly")
+               theme = shinythemes::shinytheme("flatly")
                )
   )
 }
