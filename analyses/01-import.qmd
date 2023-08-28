@@ -51,32 +51,6 @@ library(data.table)
 devtools::load_all()
 ```
 
-
-```{r import}
-import_nf <- function(fin_meta, species_name, nfpath) {
-  rst <- list()
-  
-  # Read metadata
-  df_meta <- openxlsx::read.xlsx(fin_meta, sheet = species_name) %>% 
-    dplyr::select(-fastq_ftp) %>% 
-    data.table::setnames(colnames(.), c("sample_id", "study_acc", "tax_id", "sci_name", "tissue", "sex", "dev_stage", "sample_title")) %>% 
-    dplyr::mutate(species = species_name)
-  
-  # Read salmon quant results
-  rst_salmon <- readRDS(here(nfpath, paste0(species_name, "_salmon.rds")))
-  
-  # Read dapars2 results
-  rst_pdui <- data.table::fread(here(nfpath, paste0(species_name, "_dapars2.tsv"))) %>% 
-    data.table::setnames(colnames(.), stringr::str_replace(colnames(.), "_T[12]_PDUI", ""))
-
-  return(list(
-      "metadata" = df_meta,
-      "salmon" = rst_salmon,
-      "pdui" = rst_pdui
-  ))
-}
-```
-
 ## Tasks
 
 The first task is to import output of nextflow pipeline, and save them as `*.rds` file for downstream analyses. Only UCSC samples were used.
@@ -99,6 +73,25 @@ rst_example <- readRDS(path_target("rst_cow.rds"))
 # 3. pdui: dapars2 PDUI results
 str(rst_example)
 ```
+
+
+```{r}
+row_data <- rst_example
+symbol2ensembl <- read.delim(here(path_data, "symbol2ensembl.txt"))
+
+a1 <- create_tbl_apa(row_data, symbol2ensembl)
+
+information_sample <- row_data[["metadata"]][, c(9, 4, 3, 5, 7)] %>%
+    add_count(name = "tissue_sampleS", tissue)
+
+information_sample <- information_sample %>%
+    group_by(tissue) %>%
+    add_count(name = "dev_stage_sampleS", dev_stage) %>%
+    distinct(tissue, dev_stage, .keep_all = T)
+
+View(row_data$metadata)
+```
+
 
 
 

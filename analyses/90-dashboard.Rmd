@@ -32,26 +32,33 @@ devtools::load_all()
 ```
 
 
-Home
-=======================================================================
-
-Row
------------------------------------------------------------------------
-
-Card
-
-Row
------------------------------------------------------------------------
-
-Introduction
-
-
 Browse
 =======================================================================
 
 Row {.sidebar}
 -----------------------------------------------------------------------
 ```{r}
-sliderInput("sl1", "Please select value", min = 0, max = 100, value = 50, step = 5)
-selectInput("sl2", "Please select value", choices = c("A", "B", "C"))
+selectInput("sl1", "Species", choices = c("Human", "Mouse"))
+selectInput("sl2", "Organism", choices = c("Heart", "Liver"))
+selectInput("sl3", "Develop stage", choices = c("Embryonic", "Postnatal", "Day 0"))
 ```
+
+Row
+-----------------------------------------------------------------------
+
+```{r}
+rds <- readRDS(here("data/01-import", "rst_zebrafish.rds"))
+
+rds$pdui %>%
+  dplyr::mutate(feature_id = str_replace(Gene, "\\|.*", ""))
+```
+```{r}
+rds$salmon$abundance
+```
+
+
+miRNA-binding
+=======================================================================
+
+RBP
+=======================================================================

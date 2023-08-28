@@ -7,7 +7,7 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
-mod_module1_ui <- function(id){
+mod_module1_ui <- function(id) {
   ns <- NS(id)
   tagList(
     fluidPage(
@@ -29,8 +29,8 @@ mod_module1_ui <- function(id){
 #' module1 Server Functions
 #'
 #' @noRd
-mod_module1_server <- function(id){
-  moduleServer( id, function(input, output, session){
+mod_module1_server <- function(id) {
+  moduleServer(id, function(input, output, session) {
     ns <- session$ns
     # Connect to the SQLite database
     # con <- dbConnect(RSQLite::SQLite(), dbname = "workflow/data/01-import/olddel/PDUI.sqlite")

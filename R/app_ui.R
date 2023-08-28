@@ -10,47 +10,15 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic
     navbarPage("DevAPAdb",
-               tabPanel("Home"),
-               # tabPanel("Database", mod_vhydeg_ui("vhydeg_1")),
-               tabPanel("Browse", mod_module1_ui("module1_1")),
-               tabPanel("Download"),
-               tabPanel("Tutorial"),
-               # tabPanel("Tutorial", mod_tutorial_ui("tutorial_1")),
-               theme = shinythemes::shinytheme("flatly")
-               )
+      tabPanel("Home"),
+      tabPanel("Browse", mod_module1_ui("module1_1")),
+      tabPanel("Download"),
+      tabPanel("Tutorial"),
+      # tabPanel("Tutorial", mod_tutorial_ui("tutorial_1")),
+      theme = shinythemes::shinytheme("flatly")
+    )
   )
 }
-
-
-#' #' The application User-Interface
-#' #'
-#' #' @param request Internal parameter - do not change
-#' #'
-#' #' @importFrom shinydashboard dashboardPage dashboardHeader dashboardSidebar dashboardBody
-#' #' @importFrom shinydashboard sidebarMenu menuItem tabItems
-#' #' @importFrom shiny tags
-#' #'
-#' #' @noRd
-#' app_ui <- function(request){
-#'   shiny::tagList(
-#'     golem_add_external_resources(),
-#'     shinydashboard::dashboardPage(
-#'       shinydashboard::dashboardHeader(title = "My Golem App"),
-#'       shinydashboard::dashboardSidebar(
-#'         shinydashboard::sidebarMenu(
-#'           shinydashboard::menuItem("Tab 1", tabName = "tab1"),
-#'           shinydashboard::menuItem("Tab 2", tabName = "tab2")
-#'         )
-#'       ),
-#'       shinydashboard::dashboardBody(
-#'         shinydashboard::tabItems(
-#'           shinydashboard::tabItem("tab1", "Content for Tab 1"),
-#'           shinydashboard::tabItem("tab2", "Content for Tab 2")
-#'         )
-#'       )
-#'     )
-#'   )
-#' }
 
 
 
