@@ -27,6 +27,11 @@ create_tbl_apa <- function(row_data, symbol2ensembl) {
         return(data)
     }
 
+    pdui_value <- row_data[["pdui"]] %>%
+        dplyr::mutate(transcript = str_replace_all(Gene, "\\|.*", "")) %>%
+        dplyr::select(-c("Predicted_Proximal_APA", "Loci", "chromosome", "fit_value", "Gene")) %>%
+        column_to_rownames("transcript")
+
     pdui <- row_data[["pdui"]] %>%
         dplyr::select(c("Gene", "Predicted_Proximal_APA", "Loci")) %>%
         tidyr::separate_wider_delim(Gene, "|", names = c("transcript", "gene", "chr", "strand")) %>%
@@ -52,7 +57,10 @@ create_tbl_apa <- function(row_data, symbol2ensembl) {
         dplyr::select(c("species", "tax_id", "symbol", "ensembl", "transcript", "Site_ID", "3'UTR", "PAS_cluster", "Predicted_Proximal_APA")) %>%
         data.table::setnames(c("Species", "Tax_ID", "Gene_Symbol", "Ensembl_ID", "Transcript_ID", "Site_ID", "3'UTR", "PAS_cluster", "PAS"))
 
-    return(pdui)
+    return(list(
+        "pdui_anno" = pdui,
+        "pdui_value" = pdui_value
+    ))
 }
 
 
@@ -97,4 +105,35 @@ import_nf <- function(fin_meta, species_name, nfpath) {
         "salmon" = rst_salmon,
         "pdui" = rst_pdui
     ))
+}
+
+
+
+
+#' Pivot longer function with custom names for column names
+#'
+#' This function pivots a data frame from wide to long format using the specified
+#' column names for the values and names columns.
+#'
+#' @param df A data frame to pivot
+#' @param values_to The name of the column to use for the values column in the long format
+#' @param names_to The name of the column to use for the names column in the long format
+
+#' @return A data frame in long format
+#'
+#' @importFrom tidyr pivot_longer
+#' @importFrom tibble rownames_to_column
+#' @importFrom magrittr '%>%'
+#'
+#' @examples
+#' @export
+#' @noRd
+pivot_longer2 <- function(df, values_to, names_to = "transcript_id") {
+    df_long <- df %>%
+        t() %>%
+        data.frame() %>%
+        tibble::rownames_to_column("sample_id") %>%
+        tidyr::pivot_longer(cols = -sample_id, values_to = values_to, names_to = names_to)
+
+    return(df_long)
 }

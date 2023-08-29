@@ -48,6 +48,7 @@ library(conflicted)
 library(tidyverse)
 library(openxlsx)
 library(data.table)
+library(plotly)
 devtools::load_all()
 ```
 
@@ -64,34 +65,25 @@ purrr::map2(species_ucsc, nfrst, ~ saveRDS(.y, file = path_target(paste0("rst_",
 ```
 
 
-```{r import results example}
-rst_example <- readRDS(path_target("rst_cow.rds"))
-
-# The RDS file including:
-# 1. metadata: sample metadata
-# 2. salmon: salmon quant results
-# 3. pdui: dapars2 PDUI results
-str(rst_example)
-```
-
-
-```{r}
-row_data <- rst_example
+```{r example}
+nfsave <- readRDS(path_target("rst_cow.rds"))
 symbol2ensembl <- read.delim(here(path_data, "symbol2ensembl.txt"))
+rst <- create_tbl_apa(nfsave, symbol2ensembl)
+df_pdui_anno <- rst$pdui_anno
 
-a1 <- create_tbl_apa(row_data, symbol2ensembl)
+df_pdui_abundance <- pivot_longer2(rst$pdui_value, values_to = "pdui") %>% 
+  dplyr::filter(!is.na(pdui)) %>% 
+  dplyr::inner_join(pivot_longer2(nfsave$salmon$abundance, values_to = "TPM"),
+                    by = c("sample_id", "transcript_id")) %>% 
+  dplyr::mutate(logTPM = log(TPM+1))
 
-information_sample <- row_data[["metadata"]][, c(9, 4, 3, 5, 7)] %>%
-    add_count(name = "tissue_sampleS", tissue)
+df_pdui_abundance_meta <- df_pdui_abundance %>% 
+  dplyr::left_join(nfsave$metadata[, c("sample_id", "tissue", "sex", "dev_stage")], by = "sample_id")
 
-information_sample <- information_sample %>%
-    group_by(tissue) %>%
-    add_count(name = "dev_stage_sampleS", dev_stage) %>%
-    distinct(tissue, dev_stage, .keep_all = T)
-
-View(row_data$metadata)
+fwrite(df_pdui_abundance_meta, file = path_target("pdui_abundance.csv"))
+fwrite(df_pdui_anno, file = path_target("pdui_anno.csv"))
+fwrite(nfsave$metadata, file = path_target("pdui_metadata.csv"))
 ```
-
 
 
 

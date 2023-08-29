@@ -20,6 +20,8 @@ library(conflicted)
 library(tidyverse)
 library(data.table)
 library(flexdashboard)
+library(reactable)
+library(plotly)
 
 here::i_am(paste0(params$name, ".Rmd"), uuid = "931a1175-737e-4d6e-b70a-d6411711b880")
 
@@ -31,34 +33,179 @@ path_data <- path_source("00-raw", params$name)
 devtools::load_all()
 ```
 
+```{r}
+load("../data/data4dashboard.rda")
+df_pdui_anno <- data4dashboard$anno
+df_pdui_abundance <- data4dashboard$abundance
+df_pdui_metadata <- data4dashboard$meta
+```
+
+```{r}
+# df_pdui_anno <- fread(here("data/01-import", "pdui_anno.csv"))
+# df_pdui_abundance <- fread(here("data/01-import", "pdui_abundance.csv"))
+# df_pdui_metadata <- fread(here("data/01-import", "pdui_metadata.csv"))
+```
+
+```{r}
+df_pdui_anno_sel <- reactive({
+  df_pdui_anno %>%
+    dplyr::filter(
+      Species == input$sl1,
+      # Organism == input$sl2,
+      # Develop_stage == input$sl3,
+      Gene_Symbol == input$sl4
+    )
+})
+```
+
 
 Browse
-=======================================================================
+================================
 
-Row {.sidebar}
------------------------------------------------------------------------
-```{r}
-selectInput("sl1", "Species", choices = c("Human", "Mouse"))
-selectInput("sl2", "Organism", choices = c("Heart", "Liver"))
-selectInput("sl3", "Develop stage", choices = c("Embryonic", "Postnatal", "Day 0"))
-```
 
-Row
------------------------------------------------------------------------
+## Row {.sidebar}
 
 ```{r}
-rds <- readRDS(here("data/01-import", "rst_zebrafish.rds"))
-
-rds$pdui %>%
-  dplyr::mutate(feature_id = str_replace(Gene, "\\|.*", ""))
+selectInput("sl1", "Species", choices = unique(df_pdui_anno$Species))
+selectInput("sl4", "Gene", choices = unique(df_pdui_anno$Gene_Symbol))
+selectInput("sl2", "Tissue",
+  multiple = T,
+  choices = unique(df_pdui_metadata$tissue),
+  selected = unique(df_pdui_metadata$tissue)
+)
+selectInput("sl3", "Develop stage",
+  multiple = T,
+  choices = unique(df_pdui_metadata$dev_stage),
+  selected = unique(df_pdui_metadata$dev_stage)
+)
+selectInput("sl5", "Sex",
+  multiple = T,
+  choices = unique(df_pdui_metadata$sex),
+  selected = unique(df_pdui_metadata$sex)
+)
 ```
+
+## Row {.tabset}
+
+### APA
+
 ```{r}
-rds$salmon$abundance
+renderReactable(
+  df_pdui_anno_sel() %>%
+    reactable(filterable = TRUE, sortable = TRUE, bordered = TRUE, striped = TRUE, highlight = TRUE, defaultPageSize = 10)
+)
 ```
 
+### Samples
+
+```{r}
+renderReactable({
+  df_pdui_metadata %>%
+    dplyr::filter(
+      tissue %in% input$sl2,
+      dev_stage %in% input$sl3,
+      sex %in% input$sl5
+    ) %>%
+    reactable(sortable = T, filterable = T)
+})
+```
+
+
+## Row
+
+### PDUI distribution
+```{r}
+renderPlotly({
+  selected_transcript <- df_pdui_anno_sel()[["Transcript_ID"]]
+
+  p <- df_pdui_abundance %>%
+    dplyr::filter(transcript_id %in% selected_transcript) %>%
+    ggplot(aes(x = transcript_id, y = pdui, color = transcript_id)) +
+    geom_violin(alpha = 0.6) +
+    geom_boxplot(width = 0.1, fill = "white") +
+    geom_jitter(width = 0.2, alpha = 0.4) +
+    coord_flip()
+
+  ggplotly(p)
+})
+```
+
+
+### Abundance distribution
+
+```{r}
+renderPlotly({
+  selected_transcript <- df_pdui_anno_sel()[["Transcript_ID"]]
+
+  p <- df_pdui_abundance %>%
+    dplyr::filter(transcript_id %in% selected_transcript) %>%
+    ggplot(aes(x = transcript_id, y = logTPM, color = transcript_id)) +
+    geom_violin(alpha = 0.6) +
+    geom_boxplot(width = 0.1, fill = "white") +
+    geom_jitter(width = 0.2, alpha = 0.4) +
+    coord_flip()
+
+  ggplotly(p)
+})
+```
+
+
+### PDUI to log(TPM+1)
+
+```{r}
+renderPlotly({
+  selected_transcript <- df_pdui_anno_sel()[["Transcript_ID"]]
+
+  p <- df_pdui_abundance %>%
+    dplyr::filter(transcript_id %in% selected_transcript) %>%
+    ggplot(aes(x = logTPM, y = pdui, color = transcript_id)) +
+    geom_point() +
+    # add regression line and confidence interval
+    geom_smooth(method = "lm", se = T) +
+    coord_flip()
+
+  ggplotly(p)
+})
+```
+
+## Row
+
+### DevStage-PDUI
+
+```{r}
+renderPlot({
+  df_pdui_abundance %>%
+    ggplot(aes(x = dev_stage, y = pdui, fill = dev_stage)) +
+    geom_boxplot(width = 0.2) +
+    coord_flip()
+})
+```
+
+### Tissue-PDUI
+
+```{r}
+renderPlot({
+  df_pdui_abundance %>%
+    ggplot(aes(x = tissue, y = pdui, fill = tissue)) +
+    geom_boxplot(width = 0.2) +
+    coord_flip()
+})
+```
+
+### Sex-PDUI
+
+```{r}
+renderPlot({
+  df_pdui_abundance %>%
+    ggplot(aes(x = sex, y = pdui, fill = sex)) +
+    geom_boxplot(width = 0.2) +
+    coord_flip()
+})
+```
 
 miRNA-binding
-=======================================================================
+==================================
 
 RBP
-=======================================================================
+==================================
+
