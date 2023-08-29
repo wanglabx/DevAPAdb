@@ -8,9 +8,36 @@ License: GPL (>= 3)
 URL: https://github.com/rujinlong/DevAPAdb
 BugReports: https://github.com/rujinlong/DevAPAdb/issues
 Imports: 
+    attachment,
     config (>= 0.3.1),
+    conflicted,
+    data.table,
+    DBI,
+    devtools,
+    dplyr,
+    flexdashboard,
     golem (>= 0.4.0),
-    shiny (>= 1.7.4)
+    here,
+    httr,
+    knitr,
+    openxlsx,
+    plotly,
+    projthis,
+    purrr,
+    reactable,
+    rmarkdown,
+    rsconnect,
+    RSQLite,
+    rstudioapi,
+    sass,
+    shiny (>= 1.7.4),
+    shinythemes,
+    stringr,
+    testthat,
+    tibble,
+    tidyr,
+    tidyverse,
+    usethis
 Suggests: 
     knitr,
     rmarkdown,
