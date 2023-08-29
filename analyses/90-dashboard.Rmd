@@ -34,7 +34,12 @@ devtools::load_all()
 ```
 
 ```{r}
-load("../data/data4dashboard.rda")
+# load("../data/data4dashboard.rda")
+url_address <- "https://github.com/wanglabx/DevAPAdb/raw/dev/data/data4dashboard.rda"
+tmp_file <- tempfile(fileext = ".rda")
+response <- httr::GET(url_address)
+writeBin(response$content, tmp_file)
+load(tmp_file)
 df_pdui_anno <- data4dashboard$anno
 df_pdui_abundance <- data4dashboard$abundance
 df_pdui_metadata <- data4dashboard$meta
